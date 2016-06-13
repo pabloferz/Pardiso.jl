@@ -169,14 +169,14 @@ end
 
 
 function solve{Ti, Tv <: PardisoNumTypes}(ps::AbstractPardisoSolver, A::SparseMatrixCSC{Tv, Ti},
-                                       B::VecOrMat{Tv}, T::Symbol=:N)
+                                       B::StridedVecOrMat{Tv}, T::Symbol=:N)
   X = copy(B)
   solve!(ps, X, A, B, T)
   return X
 end
 
-function solve!{Ti, Tv <: PardisoNumTypes}(ps::AbstractPardisoSolver, X::VecOrMat{Tv},
-                                        A::SparseMatrixCSC{Tv, Ti}, B::VecOrMat{Tv},
+function solve!{Ti, Tv <: PardisoNumTypes}(ps::AbstractPardisoSolver, X::StridedVecOrMat{Tv},
+                                        A::SparseMatrixCSC{Tv, Ti}, B::StridedVecOrMat{Tv},
                                         T::Symbol=:N)
 
     pardisoinit(ps)
@@ -240,8 +240,8 @@ function solve!{Ti, Tv <: PardisoNumTypes}(ps::AbstractPardisoSolver, X::VecOrMa
     return X
 end
 
-function pardiso{Ti, Tv <: PardisoNumTypes}(ps::AbstractPardisoSolver, X::VecOrMat{Tv}, A::SparseMatrixCSC{Tv, Ti},
-                                            B::VecOrMat{Tv})
+function pardiso{Ti, Tv <: PardisoNumTypes}(ps::AbstractPardisoSolver, X::StridedVecOrMat{Tv}, A::SparseMatrixCSC{Tv, Ti},
+                                            B::StridedVecOrMat{Tv})
     if length(X) != 0
         dim_check(X, A, B)
     end
@@ -268,7 +268,7 @@ function pardiso{Ti, Tv <: PardisoNumTypes}(ps::AbstractPardisoSolver, X::VecOrM
 end
 
 pardiso(ps::AbstractPardisoSolver) = ccall_pardiso(ps, 0, Float64[], Int32[], Int32[], 0, Float64[], Float64[])
-function pardiso{Ti, Tv <: PardisoNumTypes}(ps::AbstractPardisoSolver, A::SparseMatrixCSC{Tv, Ti}, B::VecOrMat{Tv})
+function pardiso{Ti, Tv <: PardisoNumTypes}(ps::AbstractPardisoSolver, A::SparseMatrixCSC{Tv, Ti}, B::StridedVecOrMat{Tv})
     pardiso(ps, Tv[], A, B)
 end
 
